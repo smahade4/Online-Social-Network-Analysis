@@ -248,7 +248,7 @@ def friend_overlap(users):
           result.append(users[index1]['screen_name'])
           result.append(int(count))
           final.append(tuple(result))
-    return sorted(final,key=lambda x: x[2],reverse=True)
+    return sorted(sorted(final,key=lambda x: x[2],reverse=True),key=lambda x: {x[1],x[0]})
     ###TODO
 	
     pass
@@ -300,7 +300,7 @@ def create_graph(users, friend_counts):
     Returns:
       A networkx Graph
     """
-    graph = nx.DiGraph()
+    graph = nx.Graph()
     for user in users:
      for friend in user['friend']:
        if(friend_counts[friend]>1):
@@ -320,35 +320,18 @@ def draw_network(graph, users, filename):
     Your figure does not have to look exactly the same as mine, but try to
     make it look presentable.
     """
-    '''
-    labels = []
    
-    for user in users:
-     for n in graph.nodes():
-      if(str(n)==user['screen_name']):
-        labels.append(n)
-      else:
-        labels.append('')
-    '''
-	
-    '''
-	for user in users:
-     for n in graph.nodes():
-      lab={}
-      print(n)
-      print(user['screen_name'])
-      if(n==user['screen_name']):
-       lab.update({i:user['screen_name']})
-      else: 
-       lab.update({i:''})  
-    '''
     lab={}
     plt.figure(figsize=(12,12))
+    pos=nx.spring_layout(graph)
+    
     for user in users:
-     lab.update({n: n if str(n) in user['screen_name']  else '' for n in graph.nodes()})
-     nx.draw_networkx(graph,labels=lab, width=.1,
+      lab.update({n: n if str(n) in user['screen_name']  else ''  for n in graph.nodes()})
+      nx.draw_networkx_labels(graph,pos,lab)
+    nx.draw_networkx(graph,with_labels=False,alpha=.5, width=.1,
                      node_size=100)
     plt.savefig(filename)
+    plt.show()
     ###TODO
     pass
 
