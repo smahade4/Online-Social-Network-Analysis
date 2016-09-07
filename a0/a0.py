@@ -36,11 +36,11 @@ import networkx as nx
 import sys
 import time
 from TwitterAPI import TwitterAPI
-
-consumer_key = 'fixme'
-consumer_secret = 'fixme'
-access_token = 'fixme'
-access_token_secret = 'fixme'
+from operator import itemgetter
+consumer_key = '4bz5qlw2272taNFmQ7KLcVvvg'
+consumer_secret = '2NX8FtoV1emX29E3YNNvj8fMbaSYLr3E3oj4TIKEHMdqAYIRQS'
+access_token = '1419710478-42rWo5FgsEsb289fzi7RONfDcfYK7lND6wD7Qzk'
+access_token_secret = 'evfvuhGL33LRBdLX07BoM4LDhqtth4DsNqWmJJA15lNdB'
 
 
 # This method is done for you. Make sure to put your credentials in the file twitter.cfg.
@@ -66,6 +66,8 @@ def read_screen_names(filename):
     >>> read_screen_names('candidates.txt')
     ['DrJillStein', 'GovGaryJohnson', 'HillaryClinton', 'realDonaldTrump']
     """
+    data= open(filename).read()
+    return data.split()
     ###TODO
     pass
 
@@ -112,6 +114,11 @@ def get_users(twitter, screen_names):
     >>> [u['id'] for u in users]
     [6253282, 783214]
     """
+    response=robust_request(twitter,"users/lookup", {'screen_name': screen_names})
+    user_data=[]
+    for r in response:
+     user_data.append(r)
+    return user_data
     ###TODO
     pass
 
@@ -137,6 +144,11 @@ def get_friends(twitter, screen_name):
     >>> get_friends(twitter, 'aronwc')[:5]
     [695023, 1697081, 8381682, 10204352, 11669522]
     """
+    response=robust_request(twitter,"friends/ids", {'screen_name': screen_name,'count':5000})
+    friendlist =[]
+    for r in response:
+      friendlist.append(r)
+    return sorted(friendlist)	
     ###TODO
     pass
 
@@ -159,10 +171,10 @@ def add_all_friends(twitter, users):
     >>> users[0]['friends'][:5]
     [695023, 1697081, 8381682, 10204352, 11669522]
     """
-    ###TODO
-    pass
-
-
+    for u in users:
+      u.update({'friend':get_friends(twitter,u['screen_name'])})
+	###TODO
+    
 def print_num_friends(users):
     """Print the number of friends per candidate, sorted by candidate name.
     See Log.txt for an example.
@@ -171,6 +183,9 @@ def print_num_friends(users):
     Returns:
         Nothing
     """
+
+    for u in sorted(users,key=lambda x: x['screen_name']):
+     	print(u['screen_name'],len(u['friend']))
     ###TODO
     pass
 
@@ -188,6 +203,12 @@ def count_friends(users):
     >>> c.most_common()
     [(2, 3), (3, 2), (1, 1)]
     """
+    c = Counter()
+
+    for u in users:
+      c.update(u['friend'])
+   
+    return c
     ###TODO
     pass
 
@@ -213,7 +234,23 @@ def friend_overlap(users):
     ...     ])
     [('a', 'c', 3), ('a', 'b', 2), ('b', 'c', 2)]
     """
+    final=[]
+    for index in range(len(users)):
+      for index1 in range(index,len(users)):
+         count=0
+         result = []   
+         if(users[index]['screen_name']!=users[index1]['screen_name']):
+          for friend in users[index]['friend']:
+           for friend1 in users[index1]['friend']:
+            if(friend==friend1):
+               count=count+1
+          result.append(users[index]['screen_name'])
+          result.append(users[index1]['screen_name'])
+          result.append(int(count))
+          final.append(tuple(result))
+    return sorted(final,key=lambda x: x[2],reverse=True)
     ###TODO
+	
     pass
 
 
@@ -221,7 +258,7 @@ def followed_by_hillary_and_donald(users, twitter):
     """
     Find and return the screen_name of the one Twitter user followed by both Hillary
     Clinton and Donald Trump. You will need to use the TwitterAPI to convert
-    the Twitter ID to a screen_name. See:
+    the Twitt er ID to a screen_name. See:
     https://dev.twitter.com/rest/reference/get/users/lookup
 
     Params:
@@ -231,10 +268,23 @@ def followed_by_hillary_and_donald(users, twitter):
         A string containing the single Twitter screen_name of the user
         that is followed by both Hillary Clinton and Donald Trump.
     """
-    ###TODO
-    pass
-
-
+    
+    followlist=[]
+    result=[]
+    for user in users:
+     if((user['screen_name']=='realDonaldTrump') or (user['screen_name']=='HillaryClinton')):
+      if not followlist:
+       for friend in user['friend']:
+        followlist.append(friend)
+      else:
+       for friend in user['friend']:
+        for f in followlist:
+         if(friend==f):
+          response=robust_request(twitter,"users/lookup", {'user_id':f})			
+          for r in response:
+            result.append(r['screen_name'])
+    return str(result)
+	
 def create_graph(users, friend_counts):
     """ Create a networkx undirected Graph, adding each candidate and friend
         as a node.  Note: while all candidates should be added to the graph,
@@ -250,6 +300,12 @@ def create_graph(users, friend_counts):
     Returns:
       A networkx Graph
     """
+    graph = nx.DiGraph()
+    for user in users:
+     for friend in user['friend']:
+       if(friend_counts[friend]>1):
+         graph.add_edge(user['screen_name'],friend)
+    return graph
     ###TODO
     pass
 
@@ -264,6 +320,35 @@ def draw_network(graph, users, filename):
     Your figure does not have to look exactly the same as mine, but try to
     make it look presentable.
     """
+    '''
+    labels = []
+   
+    for user in users:
+     for n in graph.nodes():
+      if(str(n)==user['screen_name']):
+        labels.append(n)
+      else:
+        labels.append('')
+    '''
+	
+    '''
+	for user in users:
+     for n in graph.nodes():
+      lab={}
+      print(n)
+      print(user['screen_name'])
+      if(n==user['screen_name']):
+       lab.update({i:user['screen_name']})
+      else: 
+       lab.update({i:''})  
+    '''
+    lab={}
+    plt.figure(figsize=(12,12))
+    for user in users:
+     lab.update({n: n if str(n) in user['screen_name']  else '' for n in graph.nodes()})
+     nx.draw_networkx(graph,labels=lab, width=.1,
+                     node_size=100)
+    plt.savefig(filename)
     ###TODO
     pass
 
