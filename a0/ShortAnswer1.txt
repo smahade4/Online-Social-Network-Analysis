@@ -1,0 +1,70 @@
+Enter your responses inline below and push this file to your private GitHub
+repository.
+
+
+1. Assume I plan to use the friend_overlap function above to quantify the
+similarity of two users. E.g., because 344 is larger than 1, I conclude that
+Jill Stein and Gary Johnson are more similar than Hillary Clinton and Donald
+Trump.
+
+How is this approach misleading? How might you fix it?
+
+ans 
+
+There are around 4000 friends for Drjillstein and 3000 friends for Gary Johnson
+Hence the no of common friends overlap more than hillary clinton and donaldtrump
+who follow only around 700 people and 33 people respectively
+We cannot compare and come to conclusion that Jill Stein and Gary Johnson  are more similar 
+because the people Donald trump  mostly follows are associated with him and belong to his institution
+while gary johnson and jillstein are freinds with different group of people 
+The friends_overlap() function will only give records of how many friends are common in account 
+but not similarity between two users with respective to tweets and how much they know each other
+To verify similarity among the 4 candidates we should record the no of tweets they have done
+and how many tweets of their friends mention the candidates and count the no of friends 
+tweets to see how similar they are.
+ We should also keep into account no of tweets each candiate has made like donald trump has more tweets
+around 33000 which is more than other candidates 
+Also there are various other factors like how actively the users tweet to be considered for analysis
+Therefore with such a limited set of data we cannot come to conclusion that Jill Stein 
+and Gary Johnson are more similar than Hillary Clinton and Donald
+
+
+
+2. Looking at the output of your followed_by_hillary_and_donald function, why
+do you think this user is followed by both Hilary Clinton and Donald Trump,
+who are rivals? Do some web searches to see if you can find out more
+information.
+The user that is common in hillary and donald friend list is magic johnson
+Magic johson is an American retired professional basketball 
+he supports hillary team for presidency still
+He is  friend with donald trump as he said he is willing to work with trump
+and is open to friendship with trump 
+
+
+3. There is a big difference in how many accounts each candidate follows (Gary
+Johnson follows over 3K accounts, while Donald Trump follows less than
+50). Why do you think this is? How might that affect our analysis?
+
+As donald trump follows less people and Gary Johnson has  big friend list the 
+analysis might show some misleading information like garyjohson being more popular 
+and having more similarity with other candidates while donaldtrump being less popular among all 
+candidates as he has less friends which is not accurate conclusion as friend list
+alone cannot be deciding factor.
+
+4. The follower graph we've collected is incomplete. To expand it, we would
+have to also collect the list of accounts followed by each of the
+friends. That is, for each user X that Donald Trump follows, we would have to
+also collect all the users that X follows. Assuming we again use the API call
+https://dev.twitter.com/rest/reference/get/friends/ids, how many requests will
+we have to make? Given how Twitter does rate limiting
+(https://dev.twitter.com/rest/public/rate-limiting), approximately how many
+minutes will it take to collect this data?
+Ans There is a 15 min rate interval for twitter request
+For each candidate we will give a twitter request to get the friend so total no of request
+will be equal to total no of friends each candidate has that is total no of friends count will be total no of request
+hence total no of request will be around 8073
+To make a request twitter allows 15 minute window period  than we will have each friend request 
+to be fulfilled in 15 min window period
+then total time taken will be 8073/15=538-1=537*15+8073=16128 minutes
+it would take for each friend friend request to be processed
+
