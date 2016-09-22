@@ -172,7 +172,7 @@ def add_all_friends(twitter, users):
     [695023, 1697081, 8381682, 10204352, 11669522]
     """
     for u in users:
-      u.update({'friend':get_friends(twitter,u['screen_name'])})
+      u.update({'friends':get_friends(twitter,u['screen_name'])})
 	###TODO
     
 def print_num_friends(users):
@@ -185,7 +185,7 @@ def print_num_friends(users):
     """
 
     for u in sorted(users,key=lambda x: x['screen_name']):
-     	print(u['screen_name'],len(u['friend']))
+     	print(u['screen_name'],len(u['friends']))
     ###TODO
     pass
 
@@ -206,7 +206,7 @@ def count_friends(users):
     c = Counter()
 
     for u in users:
-      c.update(u['friend'])
+      c.update(u['friends'])
    
     return c
     ###TODO
@@ -240,8 +240,8 @@ def friend_overlap(users):
          count=0
          result = []   
          if(users[index]['screen_name']!=users[index1]['screen_name']):
-          for friend in users[index]['friend']:
-           for friend1 in users[index1]['friend']:
+          for friend in users[index]['friends']:
+           for friend1 in users[index1]['friends']:
             if(friend==friend1):
                count=count+1
           result.append(users[index]['screen_name'])
@@ -274,10 +274,10 @@ def followed_by_hillary_and_donald(users, twitter):
     for user in users:
      if((user['screen_name']=='realDonaldTrump') or (user['screen_name']=='HillaryClinton')):
       if not followlist:
-       for friend in user['friend']:
+       for friend in user['friends']:
         followlist.append(friend)
       else:
-       for friend in user['friend']:
+       for friend in user['friends']:
         for f in followlist:
          if(friend==f):
           response=robust_request(twitter,"users/lookup", {'user_id':f})			
@@ -302,7 +302,7 @@ def create_graph(users, friend_counts):
     """
     graph = nx.Graph()
     for user in users:
-     for friend in user['friend']:
+     for friend in user['friends']:
        if(friend_counts[friend]>1):
          graph.add_edge(user['screen_name'],friend)
     return graph
@@ -357,7 +357,6 @@ def main():
     print('graph has %s nodes and %s edges' % (len(graph.nodes()), len(graph.edges())))
     draw_network(graph, users, 'network.png')
     print('network drawn to network.png')
-
 
 if __name__ == '__main__':
     main()
