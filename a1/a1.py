@@ -84,45 +84,41 @@ def bfs(graph, root, max_depth):
     q = deque()   
     neighbordict=defaultdict(list)
     visitedList=[]
-    q.append(root)
+    q.appendleft(root)
     depth=0
     ls[root]=0
-    finalval[root]=1
-   
+    valdict[root]=root
     while q and depth<=max_depth:
             node=q.pop()
-            if node in visitedList:
-                continue
-            visitedList.append(node)          
-            for neighbor in g.neighbors(node):  
+            if node not in visitedList:
+             visitedList.append(node)          
+             for neighbor in g.neighbors(node):  
                 if neighbor not in visitedList:
                    q.appendleft(neighbor)   
                          
-                   if node in neighbordict:
-                    if neighbor not in neighbordict:
-                        valdict[neighbor]=valdict[node]+","+neighbor  
-                        depth=len(valdict[neighbor].split(','))-1
+                   if node in ls:
+                    if neighbor not in ls:
+                        valdict[neighbor]=valdict[node]+"(,)"+neighbor  
+                        depth=len(valdict[neighbor].split('(,)'))-1
                         if depth<=max_depth:
                             neighbordict[neighbor].append(node)
                             finalval[neighbor]=1
                             ls[neighbor]=ls[node]+1
                        
                     else:
-                              
-                       if (len(valdict[node].split(','))+1)==len(valdict[neighbor].split(',')):
+                       if (len(valdict[node].split('(,)'))+1)==len(valdict[neighbor].split('(,)')):
                             neighbordict[neighbor].append(node)         
                             finalval[neighbor]=finalval[neighbor]+1
                        
                    else:          
-                    valdict[neighbor]=node+","+neighbor
-                    depth=len(valdict[neighbor].split(','))-1
+                    valdict[neighbor]=node+"(,)"+neighbor
+                    depth=len(valdict[neighbor].split('(,)'))-1
                     if depth<=max_depth:  
                         finalval[neighbor]=1  
                         neighbordict[neighbor].append(node)                                                                         
                         ls[neighbor]=1
-                        
-        
-                        
+            
+    finalval[root]=1                  
     return ls,finalval,neighbordict
               
         
@@ -142,7 +138,7 @@ def complexity_of_bfs(V, E, K):
     >>> type(v) == int or type(v) == float
     True
     """
-    return V+E
+    return V+(E*math.log(K))
     ###TODO
     pass
 
@@ -283,7 +279,8 @@ def approximate_betweenness(graph, max_depth):
        
    
     for s in c:
-       c[s]=float(c[s]/2)   
+       c[s]=float(c[s]/2)
+        
     return dict(c)
         
     
@@ -349,23 +346,23 @@ def partition_girvan_newman(graph, max_depth):
         
     while nx.number_connected_components(graphcopy)<=1:           
         maxdepth={}
-        max=0.0 
+        maxval=0.0 
         for n in v:         
          if graphcopy.has_edge(n[0],n[1]) or graphcopy.has_edge(n[1],n[0]):
-            if float(v[n])>=float(max):
-                if float(v[n])==float(max):
+            if float(v[n])>=float(maxval):
+                if float(v[n])==float(maxval):
                     if n[0]<maxdepth['val'][0]:
                         maxdepth['val']=n
-                        max=float(v[n])
+                        maxval=float(v[n])
                          
                     if n[0]==maxdepth['val'][0]:
                         if n[1]<maxdepth['val'][1]:
                             maxdepth['val']=n
-                            max=float(v[n])
+                            maxval=float(v[n])
                    
                 else:
                    maxdepth['val']=n
-                   max=float(v[n])
+                   maxval=float(v[n])
                      
         if graphcopy.has_edge(maxdepth['val'][1],maxdepth['val'][0]):    
                    graphcopy.remove_edge(maxdepth['val'][1],maxdepth['val'][0])
@@ -615,7 +612,7 @@ def jaccard(graph, node, k):
          i=i+1  
     scores= sorted(sorted(scores,key=lambda  x: x[0]),key=lambda x:x[1] , reverse=True)
     i=0  
-    while i<k:
+    while i<k and i<len(scores):
       scoretop.append((scores[i]))
       i=i+1
     return scoretop
@@ -669,28 +666,30 @@ def path_score(graph, root, k, beta):
     """
     ###TODO
    
-    maxval=max(graph.degree(graph.nodes()).values())        
-    node2distances,node2num_paths,node2parents=bfs(graph,root,maxval)
-    
-    sumval=0
+          
+    node2distances,node2num_paths,node2parents=bfs(graph,root,2)
     scores=[]
     scoretop=[]
-   
     for nodes in graph.nodes():
           flag=0
-          if nodes==root or (graph.has_edge(root,nodes)):
+          sumval=0
+          if nodes==root or (graph.has_edge(root,nodes)) or (graph.has_edge(nodes,root)):
              flag=1
-
-          if flag==0:   
-             sumval= float(math.pow(beta,node2distances[nodes])*node2num_paths[nodes])
-             scores.append(((root,nodes),sumval))   
+          if flag==0 and nodes in node2distances and nodes in node2num_paths:
+             value=math.pow(beta,node2distances[nodes])
+             sumval= float(value*node2num_paths[nodes])
+             scores.append(((root,nodes),sumval))
+            
     scores= sorted(sorted(scores,key=lambda  x: x[0]),key=lambda x:x[1] , reverse=True)
-    i=0  
+    
+    i=0
+    
     while i<k and i<len(scores):
        scoretop.append((scores[i]))
        i=i+1
+    
     return scoretop
-  
+    
   
     pass
 
