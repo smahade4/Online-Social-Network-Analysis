@@ -306,7 +306,7 @@ def is_approximation_always_right():
     """
     ###TODO
     
-    return 'no' 
+    return 'yes' 
     pass
 
 
