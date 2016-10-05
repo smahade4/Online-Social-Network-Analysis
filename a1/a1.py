@@ -142,7 +142,7 @@ def complexity_of_bfs(V, E, K):
     >>> type(v) == int or type(v) == float
     True
     """
-    return V+(E*math.log(K))
+    return V+E
     ###TODO
     pass
 
@@ -151,6 +151,7 @@ def bottom_up(root, node2distances, node2num_paths, node2parents):
     """
     Compute the final step of the Girvan-Newman algorithm.
     See p 352 From your text:
+    
     https://github.com/iit-cs579/main/blob/master/read/lru-10.pdf
         The third and final step is to calculate for each edge e the sum
         over all nodes Y of the fraction of shortest paths from the root
