@@ -667,7 +667,7 @@ def path_score(graph, root, k, beta):
     ###TODO
    
           
-    node2distances,node2num_paths,node2parents=bfs(graph,root,2)
+    node2distances,node2num_paths,node2parents=bfs(graph,root,math.inf)
     scores=[]
     scoretop=[]
     for nodes in graph.nodes():
@@ -715,6 +715,7 @@ def evaluate(predicted_edges, graph):
    
     """
     ###TODO
+    
     count=0
     for s in predicted_edges:
      for edges in graph.edges() :
