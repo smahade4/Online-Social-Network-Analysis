@@ -160,6 +160,7 @@ def cosine_sim(a, b):
     7.745966692414834
     """
     ###TODO
+    
     datas=np.dot(a,b.transpose())
     calc=np.linalg.norm(a.toarray())*np.linalg.norm(b.toarray())
     return datas/calc
