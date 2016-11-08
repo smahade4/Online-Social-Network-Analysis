@@ -195,27 +195,23 @@ def make_predictions(movies, ratings_train, ratings_test):
        total=0
        countc=0
        flag=0
-       rating=0
-       ratingcount=0
+       ratinglist=[]
        datatest=movies.loc[movies['movieId']==int(row['movieId'])] 
        df=ratings_train.loc[ratings_train['userId']==int(row['userId'])]
        for index,rowdf in df.iterrows(): 
            if row['movieId']!=rowdf['movieId']:
                datatrain=movies.loc[movies['movieId']==int(rowdf['movieId'])]
                cval=cosine_sim(datatrain['features'].iloc[0],datatest['features'].iloc[0]) 
-               rating=rating+rowdf['rating']
-               ratingcount=ratingcount+1 
+               ratinglist.append(rowdf['rating'])
                if cval.data and cval.data[0]>0:
                    total=total+cval.data[0]
                    countc=countc+(cval.data[0]*rowdf['rating'])
                    flag=1
-              
-              
        if flag==1:           
             finalval=countc/total
             listval.append(finalval)
        else:
-            finalval=rating/ratingcount
+            finalval=np.mean(ratinglist)
             listval.append(finalval)
 
     return  np.asarray(listval)
