@@ -1,4 +1,4 @@
-Grade: 33.00/50.00
+Grade: 36.00/50.00
 
 4 Deduction(s):
 
@@ -42,9 +42,9 @@ source:
 --------------
 
 --------------
-#2: 4.00 points
+#2: 2.00 points
 Failing test: test_vectorize_2: 
-        @points=4
+        @points=2
         
 Traceback (most recent call last):
   File "../assignments-sol/a3/a3_test.py", line 58, in test_vectorize_2
@@ -54,7 +54,7 @@ AssertionError: 0.40000000000000002 != 0.2
 source:
     def test_vectorize_2(self):
          """
-         @points=4
+         @points=2
          """
          movies = pd.DataFrame([[123, 'horror|horror|romance|romance|romance',
                                  ['horror', 'horror', 'romance', 'romance', 'romance']],
@@ -64,7 +64,7 @@ source:
          row0 = movies['features'].tolist()[0]
          self.assertEqual(round(max(list(row0.data)), 2),
                              0.20)
-         self.assertEqual(round(min(list(row0.data)), 1),
+         self.assertEqual(round(min(row0.toarray()[0]), 1),
                              0.0)
 --------------
 
@@ -88,9 +88,9 @@ source:
 --------------
 
 --------------
-#4: 5.00 points
+#4: 4.00 points
 Failing test: test_cosine_sim_2: 
-        @points=5
+        @points=4
         
 Traceback (most recent call last):
   File "../assignments-sol/a3/a3_test.py", line 86, in test_cosine_sim_2
@@ -100,7 +100,7 @@ TypeError: type csr_matrix doesn't define __round__ method
 source:
     def test_cosine_sim_2(self):
          """
-         @points=5
+         @points=4
          """
          self.assertEqual(round(cosine_sim(csr_matrix([1,2,0]), csr_matrix([4,-5,6])), 2),
                           -0.31)
