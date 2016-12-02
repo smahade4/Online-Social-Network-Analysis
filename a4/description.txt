@@ -4,7 +4,7 @@ Input : twitter data
 Output : clusterinput.py,classifyinput.py
 
 Assignment aims at Collecting live data from twitter for 3 fanclub chelseafc Arsenal and manutd
-This assignment aims to show how these social network groups are connected dense or sparse who are common followers all these groups have,
+This assignment aims to show how these social network groups are connected graph is dense or sparse who are common followers all these groups have,
 how we break the link between groups and how different communitites are formed
 
 In collect.py 
@@ -25,7 +25,7 @@ Code:
 Input : clusterinput.py
 Output : clusteroutput.py
 
-I am taking data of users/friends and followers that was stored in cluster.py and using partition girven neuman to cluster the communitites
+I am taking data of users/friends and followers that was stored in cluster.py and using partition girven neuman to cluster the data into 3 communitites
 Drawing a network graph of 3 groups Arsenal chelsea manchester united and its friends followers
 I am also considering friends of common followers
 I am labelling only the three brand groups and its common followers
@@ -37,9 +37,13 @@ Before the partition the groups are connected to each other by bridge of common 
 After the partition we observe different outputs 
 1) Sometimes a different community is formed with the common follower being seperated as one cluster  with its friend.
    All Edge between Common follower and the groups are removed by the community detection algorithm based on betweeness
-2) Using Grvan newman sometimes only one of group edge between common follower is removed 
+2) Using Girvan newman sometimes only one of group edge between common follower is removed 
   the follower then is attached to only one of the  group based on betweeneess centrality between edges 
   and breaks the connection between groups 
+3) If coomunties are dense the edge with high betweeness will be removed first that is edge between group of community to common follower which is densely connected 
+   will be removed if  coomunties are sparse then any of edge will be chosen as all have equal weightage and removed
+
+   
 
 This data and community cluster tells us that how two nodes in graph are related which edge has high weightage betweeness 
 How two different groups are connected how can we break link between them and common followers how they tend to link groups when data is partitioned
@@ -62,13 +66,20 @@ We are using logistic regression classifier model to fit and predict our data
 We need to vectorize and create csr matrix based on features we decide to predict gender
 
 Analysis:
-As we see fitting data into logistic regresstion model is challenge 
+Our classification shows how many people are male female who are interested in football leagues
+As we infer fitting data into logistic regresstion model requires us to generate vocab with exact required number of features
+Classificaion requires us to train model if we overfit or underfit data gender predicition may turn to be biased or will give incorrect data
+If we have less data then gender prediction will predict data which is in one max class mostly  
+As we find with having less data i was only able to predict males
+When we collected data more than 100  prediction starts giving correct results
+Sometimes fitting huge training data starts overfitting model that is giving 100 percent accuracy on training but less accuracy on testing
+
+
 Sometimes data is skewed and  more in number of only one class parameter 
 Our model classifier needs to be fit and be tuned to have  labels of both class male and female
 To predict the data accurately we need to fit matrix and label a document properly based on the features in vocab
 Based on how we tokenize,vectorize and create feature matrix we can predict more accurately the gender of user
-Our classification shows how many people are male female who are interested in football leagues
-
+As a result creating  matrix and predict gender with exact no of token features selection is important to classify users or items accurately based on any parameter
 
 4)Summarize.py
 
