@@ -335,15 +335,20 @@ def main():
         print("data size not proper")
      else:        
         feature_fns = [token_features, token_pair_features]    
-        maledata = open("male.pkl","rb")
+        maledata = open("male.pkl","rb")      
         femaledata = open("female.pkl","rb")
         
         classifyinput = open("classifyinput.pkl","rb")
         data=pickle.load(classifyinput)
         flag=0
         while flag==0: 
+            
+
             male_names=pickle.load(maledata)
             female_names=pickle.load(femaledata)
+            '''
+            male_names, female_names = get_census_names() 
+            '''    
             tweets = sample_tweets(data, male_names, female_names)
             y = np.array([get_gender(t, male_names, female_names) for t in tweets])
             if 0 not in y or 1 not in y:
@@ -368,15 +373,23 @@ def main():
         
         classifyoutput=open("classifyoutput.pkl","wb")
         pickle.dump(predictions,classifyoutput)
-        classifyoutputinstance=open("classifyoutputinstance.pkl","wb")
-        instance=[] 
+        classifyoutputinstance0=open("classifyoutputinstance0.pkl","wb")
+        classifyoutputinstance1=open("classifyoutputinstance1.pkl","wb")
+        instance0=[] 
+        instance1=[]
         '''
         for val in zip(predictions,(t['text']+" "+ t['user']['description']+" "+ t['user']['name'] for t in tweets)):
             instance.add(val)
         '''    
         for val in zip(predictions,(t['user']['name'] for t in tweets)):
-            instance.append(val)
-        pickle.dump(instance,classifyoutputinstance)
+           if(val[0]==0):
+            instance0.append(val)
+           if(val[0]==1):
+            instance1.append(val)
+            
+        pickle.dump(instance0,classifyoutputinstance0)
+        pickle.dump(instance1,classifyoutputinstance1)
+
              
         print('\npositive words:')
         print('\n'.join(['%s: %.5f' % (t,v) for t,v in top_coefs(clf, 0, 5,  vocab)]))
