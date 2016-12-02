@@ -177,7 +177,7 @@ def eval_all_combinations(docs, labels, punct_vals, collapse_urls,mentions,
     for p in punct_vals:              
         for val in collapse_urls:
             for data in mentions:
-             docval=[tokenize(d['text']+' '+d['user']['description'],p,val,mentions) for d in docs]    
+             docval=[tokenize(d['text']+' '+d['user']['description'] if d['user']['description'] else d['text'],p,val,mentions) for d in docs]    
              for s in newcmlist:      
                        matrix,vocab=vectorize(docval, s)
                        model = LogisticRegression()
@@ -215,7 +215,7 @@ def plot_sorted_accuracies(results):
 def fit_best_classifier(docs, labels, best_result):
     
     
-    docval=[tokenize(d['text']+' '+d['user']['description'],best_result['punct'],best_result['url'],best_result['mentions']) for d in docs]
+    docval=[tokenize(d['text']+' '+d['user']['description'] if d['user']['description'] else d['text'],best_result['punct'],best_result['url'],best_result['mentions']) for d in docs]
     
     matrix,vocab=vectorize(docval,list(best_result['features']))
     model = LogisticRegression()
@@ -318,7 +318,7 @@ def unknown_tweets(data, male_names, female_names):
 
 def parse_test_data(best_result,data, vocab):
     
-    docval=[tokenize(d['text']+' '+d['user']['description'],best_result['punct'],best_result['url'],best_result['mentions']) for d in data]
+    docval=[tokenize(d['text']+' '+d['user']['description'] if d['user']['description'] else d['text'],best_result['punct'],best_result['url'],best_result['mentions']) for d in data]
     matrix,vocab=vectorize(docval,list(best_result['features']),vocab)
    
     return matrix    
@@ -335,18 +335,15 @@ def main():
         print("data size not proper")
      else:        
         feature_fns = [token_features, token_pair_features]    
-        '''
-        fid = open("male.pkl","rb")
-        male_names=pickle.load(fid)
-        fid = open("female.pkl","rb")
-        female_names=pickle.load(fid)
-        '''
+        maledata = open("male.pkl","rb")
+        femaledata = open("female.pkl","rb")
         
         classifyinput = open("classifyinput.pkl","rb")
         data=pickle.load(classifyinput)
         flag=0
         while flag==0: 
-            male_names, female_names = get_census_names()    
+            male_names=pickle.load(maledata)
+            female_names=pickle.load(femaledata)
             tweets = sample_tweets(data, male_names, female_names)
             y = np.array([get_gender(t, male_names, female_names) for t in tweets])
             if 0 not in y or 1 not in y:
@@ -371,8 +368,16 @@ def main():
         
         classifyoutput=open("classifyoutput.pkl","wb")
         pickle.dump(predictions,classifyoutput)
-
-        
+        classifyoutputinstance=open("classifyoutputinstance.pkl","wb")
+        instance=[] 
+        '''
+        for val in zip(predictions,(t['text']+" "+ t['user']['description']+" "+ t['user']['name'] for t in tweets)):
+            instance.add(val)
+        '''    
+        for val in zip(predictions,(t['user']['name'] for t in tweets)):
+            instance.append(val)
+        pickle.dump(instance,classifyoutputinstance)
+             
         print('\npositive words:')
         print('\n'.join(['%s: %.5f' % (t,v) for t,v in top_coefs(clf, 0, 5,  vocab)]))
         print('negative words:')

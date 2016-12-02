@@ -106,21 +106,19 @@ def get_users(twitter, screen_names):
 
 
 def get_followers(twitter,users,countval):
-  for val in users: 
-     cursor=-1 
+  for val in users:  
      followlist=[]
-     request =robust_request(twitter,'followers/list', {'screen_name': val['screen_name'],'cursor':cursor,'count':countval})           
+     request =robust_request(twitter,'followers/list', {'screen_name': val['screen_name'],'count':countval})           
      for s in request: 
              if s['screen_name'] not in followlist:
                  followlist.append(s['screen_name'])
-     print(len(followlist))             
      val.update({'connection':followlist})            
   return users
   
 def get_friends(twitter,users,countval):
+  namelist=[]
   for val in users: 
     followlist=[]  
-    tweetlist=[]
     request =robust_request(twitter,'friends/list', {'screen_name': val['screen_name'],'count':countval})           
     for s in request: 
         if s['screen_name'] and s['screen_name'] not in followlist:
@@ -129,12 +127,17 @@ def get_friends(twitter,users,countval):
         val['connection']= val['connection']+followlist                               
     else:
         val['connection']=followlist
-    
-    request =robust_request(twitter,'statuses/user_timeline', {'screen_name': val['screen_name'],'count':countval})           
-    for s in request: 
-        tweetlist.append(s)
-    print(len(followlist))
-
+    '''
+    while(len(tweetlist)<40): 
+     request =robust_request(twitter,'statuses/user_timeline', {'screen_name': val['screen_name'],'since_id':since_id,'count':200})           
+     for s in request: 
+       if(s['retweeted']==False and s['user']['screen_name'] not in namelist and s['text']):  
+          tweetlist.append(s)
+          namelist.append(s['user']['screen_name'])
+          if(since_id<s['id']):
+             since_id=s['id']
+     print(len(tweetlist))
+     '''
   return users
               
         
@@ -158,23 +161,35 @@ def main():
     '''
     twitter=TwitterAPI('LtTeYMjefY2vQCSecvwdpQQuf', 'WMi3J6hLmVbNIMA6hWQpeDdmVT9N9gP2NC5VIRfkDnS8Ihyiu9', '1419710478-Vt2i4JqTgk7DLBTA8wwjOagDdtyNmzrgVcP8W9u', '56dIlebPVMbbfIukwEoo1X1zEhQLgGAvm6VFwVXyK6Dc6')
     '''
+ 
     screen_names=['Arsenal','ChelseaFC','ManUtd']
     users = sorted(get_users(twitter, screen_names), key=lambda x: x['screen_name'])
-    users =get_followers(twitter,users,10)
-    users=get_friends(twitter,users,10)   
+    users =get_followers(twitter,users,50)
+    print("follower list for fanclub done")
+    users=get_friends(twitter,users,50)   
+    print("friend list for fanclub done")
+ 
     since_id=0
     namelist=[]
     
-    while len(tweetlist)<80:
+    while len(tweetlist)<120:
       for data in screen_names: 
        request =robust_request(twitter,'search/tweets', {'q': '@'+data,'count':100,'since_id':since_id,"lang": "en"})           
        for s in request:
-         if(s['retweeted']==False and s['user']['screen_name'] not in namelist and  s['user']['description']):  
+         if(s['user']['screen_name'] not in namelist):  
            tweetlist.append(s)
            namelist.append(s['user']['screen_name'])
+           print(len(tweetlist))
            if(since_id<s['id']):
              since_id=s['id']
     print(len(tweetlist))       
+    print("tweetlist for fanclub done")
+    pickle.dump(tweetlist, classifyinput)
+    male_names, female_names = get_census_names() 
+     
+    pickle.dump(male_names,censusdata_male)
+    pickle.dump(female_names,censusdata_female)
+ 
     friend_counts = count_friends(users)
     datalist=[]   
     for user in users:      
@@ -183,17 +198,13 @@ def main():
            datalist.append(friend)
            
     user1 = sorted(get_users(twitter, datalist), key=lambda x: x['screen_name'])      
-    user1 =get_friends(twitter,user1,10)
-  
+    user1=get_friends(twitter,user1,20)
+    print("friendlist for followers done")
+ 
     users.extend(user1)
      
     pickle.dump(users, clusterinput)
     
-    pickle.dump(tweetlist, classifyinput)
-    male_names, female_names = get_census_names() 
-     
-    pickle.dump(male_names,censusdata_male)
-    pickle.dump(female_names,censusdata_female)
       
 if __name__ == '__main__':
     main()
