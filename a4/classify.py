@@ -314,6 +314,7 @@ def unknown_tweets(data, male_names, female_names):
     for r in data:
                  if 'user' in r and 'name' in r['user']:
                     name = get_first_name(r)
+                    
                     if name not in male_names and name not in female_names:
                         tweets.append(r)
                     
