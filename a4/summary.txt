@@ -1,0 +1,8 @@
+Number of users collected 110
+Number of messages collected 106
+Number of communities discovered 3
+Average number of users per community 28.666666666666668
+Number of instances for class 0 -Male found 76
+Number of instances for class 1 -Female found 23
+Example of class 0(0, 'Nandö`10')
+Example of class 1(1, '@ken is lumet')
