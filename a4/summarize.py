@@ -44,14 +44,14 @@ def main():
  finalfile.write("\n")
  classifyinstance0 = open("classifyoutputinstance0.pkl","rb")
  classify=pickle.load(classifyinstance0)
- finalfile.write("Example of class 0"+str( classify[0]))
+ finalfile.write("Example of class 0 "+str( classify[0][1]))
  
  classifyinstance0 = open("classifyoutputinstance0.pkl","rb")
  classify=pickle.load(classifyinstance0)
  classifyinstance1 = open("classifyoutputinstance1.pkl","rb")
  classify=pickle.load(classifyinstance1)
  finalfile.write("\n") 
- finalfile.write("Example of class 1"+str( classify[0]))
+ finalfile.write("Example of class 1 "+str(classify[0][1]))
  
 if __name__ == '__main__':
     main()
