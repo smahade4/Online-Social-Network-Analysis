@@ -127,8 +127,13 @@ def vectorize(tokens_list, feature_fns, vocab=None):
               index = vocab[s[0]]
               indices.append(index)
               data.append(s[1])
-        
         indptr.append(len(indices))  
+       for d in feats:
+           for s in vocab.keys() :         
+              index = vocab[s]
+              indices.append(index)
+              data.append(0)
+           indptr.append(len(indices))  
                    
     matrix=csr_matrix((data, indices, indptr), dtype=np.int64)
     return matrix,vocab  
@@ -309,7 +314,7 @@ def unknown_tweets(data, male_names, female_names):
     for r in data:
                  if 'user' in r and 'name' in r['user']:
                     name = get_first_name(r)
-                    if name  in male_names or name not in female_names:
+                    if name not in male_names and name not in female_names:
                         tweets.append(r)
                     
     return tweets
@@ -335,20 +340,22 @@ def main():
         print("data size not proper")
      else:        
         feature_fns = [token_features, token_pair_features]    
+        '''    
+
         maledata = open("male.pkl","rb")      
         femaledata = open("female.pkl","rb")
-        
+        '''
         classifyinput = open("classifyinput.pkl","rb")
         data=pickle.load(classifyinput)
         flag=0
         while flag==0: 
             
-
+            '''    
             male_names=pickle.load(maledata)
             female_names=pickle.load(femaledata)
             '''
             male_names, female_names = get_census_names() 
-            '''    
+                
             tweets = sample_tweets(data, male_names, female_names)
             y = np.array([get_gender(t, male_names, female_names) for t in tweets])
             if 0 not in y or 1 not in y:
