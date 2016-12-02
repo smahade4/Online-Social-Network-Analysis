@@ -1,0 +1,88 @@
+1) collect.py
+Code:
+Input : twitter data
+Output : clusterinput.py,classifyinput.py
+
+Assignment aims at Collecting live data from twitter from 3 fanclub chelseafc arsenal and manutd
+My assignment aims to show how these 3 groups are connected what are common followers all 3 groups has 
+and what changes happen if we break the link between groups how different communitites are formed
+In collect.py i am taking subset of 50 friends and followers of 3 communities
+For each common follower i am taking their 20 friend list
+I am taking around 100 mentions tweets and description for classification of gender seperately where people have mentioned any of these 3 groups
+I am storing users and mention tweets in file clusterinput and classifyinput
+
+Analysis:
+collect as we are collecting live data and twitter has rate limit it takes time to get all friends followers
+Using rate limit efficiently and storing all data helps in future analyis clustering and classification
+
+
+2) cluser.py
+Code:
+Input : clusterinput.py
+Output : clusteroutput.py
+
+I am taking data of users/friends and followers that was stored in cluster.py and using partition girven neuman to cluster the communitites
+Drawing a network graph of 3 groups Arsenal chelsea manchester united and its friends followers
+I am also considering friends of common followers
+I am labelling only the three brand groups and its common followers
+I am storing the clusters that were obtained from partition to output file clusteroutput.py
+
+Analysis:
+After drawing graph we can see that all 3 groups are connected by common followers 
+Before the partition the groups are connected to each other by bridge of common followers
+After the partition we observe different outputs 
+1) Sometimes a different community is formed with the common follower being seperated as one cluster  with its friend.
+   All Edge between Common follower and the groups are removed by the community detection algorithm based on betweeness
+2) Using Grvan newman sometimes only one of group edge between common follower is removed 
+  the follower then is attached to only one of the  group based on betweeneess centrality between edges 
+  and breaks the connection between groups 
+
+This data and community cluster tells us that how two nodes in graph are related which edge has high weightage betweeness 
+how two different groups are connected how can we break link between them and common followers how they tend to link groups when data is partitioned
+
+
+3) Classify.py
+Input : classifyinput.py
+Output : classifyoutput.py
+
+I am classifying people who mentioned any of fanclubs based on their gender
+This data gives us information about how many males and females are interested in football teams and mention them in their tweets and talk about the teams in twitter
+First of all i am loading data and fitting model based on names for which gender is gound in census data which are known from list
+I am taking census data names and matching the users i get who mentions any of fanclub
+then for known names i am fitting model based on tweets they made on groups
+Also i am taking into consideration description of mentioned users with text as features to predict gender
+Also i am tokenizing based on urls and mentions i want to ignore mentions and urls from person attribute to predict gender
+As majority people have mentioned those fanclubs or can include url to view i dont want those features to be included in my gender prediction
+Also i am creating token pair and token features as i want feature to be based on count: no of times a person has used the feature to predict his or her gender
+We are using logistic regression classifier model to fit and predict our data
+We need to vectorize and create csr matrix based on features we decide to predict gender
+
+Analysis:
+As we see fitting data into logistic regresstion model is challenge 
+Sometimes data is skewed and  more in number of only one class parameter 
+Our model classifier needs to be fit and be tuned to have  labels of both class male and female
+To predict the data accurately we need to fit matrix and label a document properly based on the features in vocab
+Based on how we tokenize,vectorize and create feature matrix we can predict more accurately the gender of user
+Our classification shows how many people are male female who are interested in football leagues
+
+
+4)Summarize.py
+
+Input : classifyinput,classifyoutput,clusterinput,clusteroutput
+Output:summary.txt
+Summarize all data collected based on classification and clustering
+We are getting count for no of communitites detected no of users and tweets
+We analyse how many people are classified and what their gender is 
+How many average users exist in one community
+
+Assignment Analysis:
+The whole assignment aims to perform community detection link prediction and classification using machine learning
+In this part we are analysing how we can classify live twitter data using logistic regression on any parameter like demographics or sentiments
+How we can detect and cluster users into communitites based on community detection algorithms 
+
+
+Issues/concerns
+Because of twitter rate limit data extraction takes time
+Sometimes private user profile are not able to be accessed when accessing followers friends
+
+
