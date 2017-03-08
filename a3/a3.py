@@ -163,7 +163,7 @@ def cosine_sim(a, b):
     
     datas=np.dot(a,b.transpose())
     calc=np.linalg.norm(a.toarray())*np.linalg.norm(b.toarray())
-    return datas/calc
+    return (datas/calc)[0]
 
     pass
 
@@ -204,9 +204,10 @@ def make_predictions(movies, ratings_train, ratings_test):
                datatrain=movies.loc[movies['movieId']==int(rowdf['movieId'])]
                cval=cosine_sim(datatrain['features'].iloc[0],datatest['features'].iloc[0]) 
                ratinglist.append(rowdf['rating'])
-               if cval.data and cval.data[0]>0:
-                   total=total+cval.data[0]
-                   countc=countc+(cval.data[0]*rowdf['rating'])
+               
+               if cval>0:
+                   total=total+cval
+                   countc=countc+(cval*rowdf['rating'])
                    flag=1
        if flag==1:           
             finalval=countc/total
