@@ -110,7 +110,7 @@ def vectorize(tokens_list, feature_fns, vocab=None):
            unsortedvocab.setdefault(s[0], len(unsortedvocab)) 
     
     if vocab==None:        
-      vocab={}       
+      vocab={}         
       for i in sorted(unsortedvocab):
                vocab.setdefault(i,len(vocab))
       for d in feats:
@@ -120,21 +120,21 @@ def vectorize(tokens_list, feature_fns, vocab=None):
               indices.append(index)
               data.append(s[1])            
         indptr.append(len(indices))
-    else:
+    else: 
        for d in feats:
-        for s in d: 
-          if s[0] in vocab and (s[0] !='this_is_a_mention' or s[0] !='this_is_a_url'):  
+         finallist=[]  
+         for s in d: 
+            if s[0] in vocab:
               index = vocab[s[0]]
+              finallist.append(s)  
               indices.append(index)
               data.append(s[1])
-        indptr.append(len(indices))  
-       for d in feats:
-           for s in vocab.keys() :         
-              index = vocab[s]
+         for s in vocab.keys():
+             if s not in finallist:
+              index = vocab[s]  
               indices.append(index)
               data.append(0)
-           indptr.append(len(indices))  
-                   
+         indptr.append(len(indices)) 
     matrix=csr_matrix((data, indices, indptr), dtype=np.int64)
     return matrix,vocab  
     
@@ -323,9 +323,10 @@ def unknown_tweets(data, male_names, female_names):
 
 
 def parse_test_data(best_result,data, vocab):
-    
+
     docval=[tokenize(d['text']+' '+d['user']['description'] if d['user']['description'] else d['text'],best_result['punct'],best_result['url'],best_result['mentions']) for d in data]
-    matrix,vocab=vectorize(docval,list(best_result['features']),vocab)
+  
+    matrix,vocab=vectorize(docval,best_result['features'],vocab)
    
     return matrix    
     
@@ -341,8 +342,7 @@ def main():
         print("data size not proper")
      else:        
         feature_fns = [token_features, token_pair_features]    
-        '''    
-
+        '''
         maledata = open("male.pkl","rb")      
         femaledata = open("female.pkl","rb")
         '''
@@ -350,13 +350,12 @@ def main():
         data=pickle.load(classifyinput)
         flag=0
         while flag==0: 
-            
-            '''    
+            '''     
             male_names=pickle.load(maledata)
             female_names=pickle.load(femaledata)
             '''
             male_names, female_names = get_census_names() 
-                
+             
             tweets = sample_tweets(data, male_names, female_names)
             y = np.array([get_gender(t, male_names, female_names) for t in tweets])
             if 0 not in y or 1 not in y:
@@ -371,15 +370,16 @@ def main():
         worst_result = results[-1]
         plot_sorted_accuracies(results)   
         clf, vocab = fit_best_classifier(tweets, y, best_result)    
-    
+       
         print('best cross-validation result:\n%s' % str(best_result))
         print('worst cross-validation result:\n%s' % str(worst_result))   
         tweets = unknown_tweets(data, male_names, female_names) 
+        print(len(tweets))
         X_test=parse_test_data(best_result,tweets, vocab)
         predictions = clf.predict(X_test)
-        print(predictions)
-        
+   
         classifyoutput=open("classifyoutput.pkl","wb")
+        print(predictions)
         pickle.dump(predictions,classifyoutput)
         classifyoutputinstance0=open("classifyoutputinstance0.pkl","wb")
         classifyoutputinstance1=open("classifyoutputinstance1.pkl","wb")
@@ -397,8 +397,8 @@ def main():
             
         pickle.dump(instance0,classifyoutputinstance0)
         pickle.dump(instance1,classifyoutputinstance1)
-
-             
+        print(len(predictions))    
+                 
         print('\npositive words:')
         print('\n'.join(['%s: %.5f' % (t,v) for t,v in top_coefs(clf, 0, 5,  vocab)]))
         print('negative words:')
