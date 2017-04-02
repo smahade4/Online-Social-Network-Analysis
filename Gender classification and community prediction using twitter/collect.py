@@ -157,10 +157,6 @@ def main():
                  o.access_token_key,
                  o.access_token_secret)
      
-    twitter=TwitterAPI('KUtk2n721gpZOdNzdofhNMwQ2', 'PCGvOXPdUl9zXqPmZFELHDhyjcpxbjJkhVHEOSiPWjM36SV8Ue', '803658132748697600-RBmP0GByvVEZwNSuaFetd2E0SoSXeKs', 'YJon3mIji7LWmzXAFcEVv0bbLNeYAhDiUT9fEuAUCqind')
-    '''
-    twitter=TwitterAPI('LtTeYMjefY2vQCSecvwdpQQuf', 'WMi3J6hLmVbNIMA6hWQpeDdmVT9N9gP2NC5VIRfkDnS8Ihyiu9', '1419710478-Vt2i4JqTgk7DLBTA8wwjOagDdtyNmzrgVcP8W9u', '56dIlebPVMbbfIukwEoo1X1zEhQLgGAvm6VFwVXyK6Dc6')
-    '''
  
     screen_names=['Arsenal','ChelseaFC','ManUtd']
     users = sorted(get_users(twitter, screen_names), key=lambda x: x['screen_name'])

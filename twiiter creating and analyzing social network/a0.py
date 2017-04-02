@@ -37,10 +37,10 @@ import sys
 import time
 from TwitterAPI import TwitterAPI
 from operator import itemgetter
-consumer_key = '4bz5qlw2272taNFmQ7KLcVvvg'
-consumer_secret = '2NX8FtoV1emX29E3YNNvj8fMbaSYLr3E3oj4TIKEHMdqAYIRQS'
-access_token = '1419710478-42rWo5FgsEsb289fzi7RONfDcfYK7lND6wD7Qzk'
-access_token_secret = 'evfvuhGL33LRBdLX07BoM4LDhqtth4DsNqWmJJA15lNdB'
+consumer_key = ''
+consumer_secret = ''
+access_token = ''
+access_token_secret = ''
 
 
 # This method is done for you.
